@@ -1298,7 +1298,7 @@ window.downloadPdfLaporan = function(type) {
           <tr style="border-bottom: 1px solid #222222;">
             <td style="padding: 8px 6px; font-weight: bold; color: #ff2a2a;">${item.orderId}</td>
             <td style="padding: 8px 6px; font-weight: 600;">${escapeHtml(item.nama)}</td>
-            ${type === 'baju' ? `<td style="padding: 8px 6px;"><span style="background:#222; padding:2px 6px; border-radius:4px;">${item.size || '-'}</span></td>` : ''}
+            ${type === 'baju' ? `<td style="padding: 8px 6px;">${item.size || '-'}</td>` : ''}
             <td style="padding: 8px 6px;">${item.pcs} pcs</td>
             <td style="padding: 8px 6px;">${item.whatsapp}</td>
             <td style="padding: 8px 6px; font-weight: bold; color: #00ff66;">Rp ${numberWithCommas(item.totalHarga)}</td>
@@ -1322,6 +1322,28 @@ window.downloadPdfLaporan = function(type) {
 
       reportContent.innerHTML = rowsHtml;
       
+      // Munculkan area laporan secara block agar ukurannya terbaca oleh html2pdf
+      reportArea.classList.remove('hidden');
+      reportArea.style.display = 'block';
+
+      const opt = {
+        margin:       0.3,
+        filename:     `Laporan_Riwayat_${type.toUpperCase()}_BOD.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, backgroundColor: '#000000', logging: false, useCORS: true },
+        jsPDF:        { unit: 'in', format: 'a4', orientation: 'landscape' }
+      };
+
+      html2pdf().set(opt).from(reportWrapper).save().then(() => {
+        reportArea.style.display = 'none';
+        reportArea.classList.add('hidden');
+      }).catch(err => {
+        console.error(err);
+        reportArea.style.display = 'none';
+        reportArea.classList.add('hidden');
+        showToast("Gagal mengunduh PDF Laporan", "error");
+      });
+    }
       // Pastikan elemen wrapper muncul sementara secara mutlak agar html2pdf dapat membaca isi elemen
       reportArea.classList.remove('hidden');
       reportArea.style.display = 'block';
