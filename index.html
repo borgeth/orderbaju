@@ -13,6 +13,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,800;0,900;1,900&display=swap" rel="stylesheet">
   <!-- html2pdf.js for PDF Generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- jsPDF AutoTable Plugin for Clean Text-based PDF Tables -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
   <!-- SheetJS (xlsx) for Excel Export -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
@@ -1268,7 +1270,7 @@ window.downloadPdfLaporan = function(type) {
         return;
       }
 
-      // Pastikan objek jsPDF tersedia dari bundle html2pdf yang sudah dimuat di head
+      // Mengakses constructor jsPDF dari bundle html2pdf
       const { jsPDF } = window.jspdf || window;
       const doc = new jsPDF({
         orientation: 'landscape',
@@ -1276,108 +1278,100 @@ window.downloadPdfLaporan = function(type) {
         format: 'a4'
       });
 
-      // Fungsi untuk membuat header di setiap halaman baru
-      function drawHeader() {
-        // Background hitam
-        doc.setFillColor(8, 8, 8);
-        doc.rect(0, 0, 297, 210, 'F');
+      // Header Laporan PDF
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(14);
+      doc.setTextColor(255, 42, 42);
+      doc.text(`LAPORAN TRANSAKSI PEMBELIAN ${type.toUpperCase()}`, 14, 15);
 
-        // Judul Laporan
-        doc.setTextColor(255, 42, 42);
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(15);
-        doc.text(`LAPORAN TRANSAKSI PEMBELIAN ${type.toUpperCase()}`, 14, 15);
+      doc.setFontSize(8);
+      doc.setTextColor(100, 100, 100);
+      doc.text("BEWARE OF DOGS OFFICIAL DATABASE", 14, 20);
+      doc.text(`Dicetak pada: ${new Date().toLocaleString('id-ID')}`, 210, 20);
 
-        doc.setTextColor(150, 150, 150);
-        doc.setFontSize(8);
-        doc.text("BEWARE OF DOGS OFFICIAL DATABASE", 14, 21);
-        doc.text(`Dicetak pada: ${new Date().toLocaleString('id-ID')}`, 210, 21);
+      // Membentuk Baris Data Tabel (Sama persis seperti struktur Excel)
+      let tableHeaders = [];
+      let tableRows = [];
 
-        // Garis Pembatas Header
-        doc.setDrawColor(255, 42, 42);
-        doc.setLineWidth(0.4);
-        doc.line(14, 25, 283, 25);
-
-        // Header Kolom Tabel
-        let startY = 32;
-        doc.setFillColor(20, 20, 20);
-        doc.rect(14, startY - 5, 269, 8, 'F');
-
-        doc.setTextColor(255, 42, 42);
-        doc.setFontSize(9);
-        doc.text("ID Transaksi", 16, startY);
-        doc.text("Nama Pemesan", 55, startY);
-        if (type === 'baju') {
-          doc.text("Size", 130, startY);
-          doc.text("Qty", 150, startY);
-          doc.text("WhatsApp", 175, startY);
-          doc.text("Total Bayar", 220, startY);
-          doc.text("Tanggal", 250, startY);
-        } else {
-          doc.text("Qty", 140, startY);
-          doc.text("WhatsApp", 165, startY);
-          doc.text("Total Bayar", 215, startY);
-          doc.text("Tanggal", 250, startY);
-        }
+      if (type === 'baju') {
+        tableHeaders = ["No", "ID Transaksi", "Nama Pemesan", "Size", "Jumlah (Pcs)", "Harga Satuan", "Total Harga", "WhatsApp", "Tanggal"];
+        dataList.forEach((item, index) => {
+          tableRows.push([
+            index + 1,
+            item.orderId,
+            item.nama,
+            item.size || '-',
+            item.pcs,
+            `Rp ${numberWithCommas(item.hargaSatuan || 180000)}`,
+            `Rp ${numberWithCommas(item.totalHarga)}`,
+            item.whatsapp,
+            item.dateFormatted
+          ]);
+        });
+      } else {
+        tableHeaders = ["No", "ID Transaksi", "Nama Pemesan", "Jumlah (Pcs)", "Harga Satuan", "Total Harga", "WhatsApp", "Tanggal"];
+        dataList.forEach((item, index) => {
+          tableRows.push([
+            index + 1,
+            item.orderId,
+            item.nama,
+            item.pcs,
+            `Rp ${numberWithCommas(item.hargaSatuan || 20000)}`,
+            `Rp ${numberWithCommas(item.totalHarga)}`,
+            item.whatsapp,
+            item.dateFormatted
+          ]);
+        });
       }
 
-      // Render Halaman Pertama
-      drawHeader();
-      let startY = 40;
-      doc.setFont("helvetica", "normal");
-      doc.setTextColor(230, 230, 230);
-      doc.setFontSize(9);
-
-      // Isi Data Baris Tabel
-      dataList.forEach((item) => {
-        // Jika posisi Y hampir mencapai batas bawah kertas (185mm), buat halaman baru otomatis
-        if (startY > 185) {
-          doc.addPage();
-          drawHeader();
-          startY = 40;
-        }
-
-        doc.text(String(item.orderId), 16, startY);
-        doc.text(String(item.nama), 55, startY);
-        
-        if (type === 'baju') {
-          doc.text(String(item.size || '-'), 130, startY);
-          doc.text(String(item.pcs + ' pcs'), 150, startY);
-          doc.text(String(item.whatsapp), 175, startY);
-          doc.text(`Rp ${numberWithCommas(item.totalHarga)}`, 220, startY);
-          doc.text(String(item.dateFormatted), 250, startY);
-        } else {
-          doc.text(String(item.pcs + ' pcs'), 140, startY);
-          doc.text(String(item.whatsapp), 165, startY);
-          doc.text(`Rp ${numberWithCommas(item.totalHarga)}`, 215, startY);
-          doc.text(String(item.dateFormatted), 250, startY);
-        }
-
-        startY += 8; // Jarak antar baris
-      });
-
-      // Garis Pembatas Bawah & Ringkasan Total
-      if (startY > 185) {
-        doc.addPage();
-        drawHeader();
-        startY = 40;
-      }
-
-      startY += 2;
-      doc.setDrawColor(255, 42, 42);
-      doc.line(14, startY, 283, startY);
-
-      startY += 8;
+      // Hitung Total Keseluruhan (Grand Total)
       const totalPcs = dataList.reduce((acc, curr) => acc + (parseInt(curr.pcs) || 0), 0);
       const grandTotal = dataList.reduce((acc, curr) => acc + (parseInt(curr.totalHarga) || 0), 0);
 
-      doc.setFont("helvetica", "bold");
-      doc.setTextColor(200, 200, 200);
-      doc.text(`Total Item Terjual: ${totalPcs} pcs`, 14, startY);
-      doc.setTextColor(0, 255, 102);
-      doc.text(`TOTAL OMSET: Rp ${numberWithCommas(grandTotal)}`, 190, startY);
+      // Baris Total di bagian paling bawah tabel
+      if (type === 'baju') {
+        tableRows.push(["TOTAL", "", "", "", totalPcs, "", `Rp ${numberWithCommas(grandTotal)}`, "", ""]);
+      } else {
+        tableRows.push(["TOTAL", "", "", totalPcs, "", `Rp ${numberWithCommas(grandTotal)}`, "", ""]);
+      }
 
-      // Simpan file PDF secara langsung
+      // Render Tabel menggunakan AutoTable Plugin secara bersih & profesional
+      doc.autoTable({
+        startY: 25,
+        head: [tableHeaders],
+        body: tableRows,
+        theme: 'grid',
+        headStyles: {
+          fillColor: [255, 42, 42],
+          textColor: [255, 255, 255],
+          fontStyle: 'bold',
+          halign: 'center',
+          fontSize: 9
+        },
+        bodyStyles: {
+          textColor: [40, 40, 40],
+          fontSize: 8,
+          valign: 'middle'
+        },
+        columnStyles: {
+          0: { halign: 'center', cellWidth: 12 },
+          1: { cellWidth: 35 },
+          2: { cellWidth: 50 },
+        },
+        didParseCell: function (data) {
+            // Berikan warna tebal khusus pada baris TOTAL di bagian bawah
+            if (data.row.index === tableRows.length - 1) {
+                data.cell.styles.fontStyle = 'bold';
+                data.cell.styles.fillColor = [240, 240, 240];
+                data.cell.styles.textColor = [0, 150, 50];
+            }
+        },
+        margin: { top: 25, right: 14, bottom: 20, left: 14 },
+        pageBreak: 'auto',
+        showHead: 'everyPage'
+      });
+
+      // Simpan file PDF
       doc.save(`Laporan_Riwayat_${type.toUpperCase()}_BOD.pdf`);
       showToast(`Laporan PDF ${type} berhasil diunduh!`);
     }
