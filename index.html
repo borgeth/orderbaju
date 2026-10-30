@@ -1268,81 +1268,108 @@ window.downloadPdfLaporan = function(type) {
         return;
       }
 
-      const reportTitle = document.getElementById('pdfReportTitle');
-      const reportContent = document.getElementById('pdfReportContent');
-      const reportArea = document.getElementById('pdfReportArea');
-      const reportWrapper = document.getElementById('pdfReportContentWrapper');
-      const printDateEl = document.getElementById('pdfPrintDate');
-
-      printDateEl.innerText = new Date().toLocaleString('id-ID');
-      reportTitle.innerText = `LAPORAN TRANSAKSI PEMBELIAN ${type.toUpperCase()}`;
+      // Menggunakan jsPDF secara langsung berbasis data teks (tanpa html2canvas)
+      const { jsPDF } = window.jspdf || {};
       
-      let rowsHtml = `
-        <table style="width:100%; border-collapse: collapse; margin-top: 15px; color:#ffffff; font-size:11px; text-align:left;">
-          <thead>
-            <tr style="border-bottom: 2px solid #ff2a2a; color: #ff2a2a; font-weight: bold; text-transform: uppercase;">
-              <th style="padding: 8px 6px;">ID Transaksi</th>
-              <th style="padding: 8px 6px;">Nama Pemesan</th>
-              ${type === 'baju' ? '<th style="padding: 8px 6px;">Size</th>' : ''}
-              <th style="padding: 8px 6px;">Qty</th>
-              <th style="padding: 8px 6px;">WhatsApp</th>
-              <th style="padding: 8px 6px;">Total Bayar</th>
-              <th style="padding: 8px 6px;">Tanggal</th>
-            </tr>
-          </thead>
-          <tbody>
-      `;
-
-      dataList.forEach(item => {
-        rowsHtml += `
-          <tr style="border-bottom: 1px solid #222222;">
-            <td style="padding: 8px 6px; font-weight: bold; color: #ff2a2a;">${item.orderId}</td>
-            <td style="padding: 8px 6px; font-weight: 600;">${escapeHtml(item.nama)}</td>
-            ${type === 'baju' ? `<td style="padding: 8px 6px;">${item.size || '-'}</td>` : ''}
-            <td style="padding: 8px 6px;">${item.pcs} pcs</td>
-            <td style="padding: 8px 6px;">${item.whatsapp}</td>
-            <td style="padding: 8px 6px; font-weight: bold; color: #00ff66;">Rp ${numberWithCommas(item.totalHarga)}</td>
-            <td style="padding: 8px 6px; color: #aaaaaa; font-size: 10px;">${item.dateFormatted}</td>
-          </tr>
-        `;
+      // Jika jsPDF dimuat melalui bundle html2pdf, kita bisa buat instance dokumen baru
+      // Mengambil constructor dari bundle html2pdf yang sudah ada di halaman
+      const doc = new jspdf.jsPDF({
+        orientation: 'landscape',
+        unit: 'mm',
+        format: 'a4'
       });
 
-      const grandTotal = dataList.reduce((acc, curr) => acc + (parseInt(curr.totalHarga) || 0), 0);
-      const totalPcs = dataList.reduce((acc, curr) => acc + (parseInt(curr.pcs) || 0), 0);
+      // Header Laporan
+      doc.setFillColor(8, 8, 8);
+      doc.rect(0, 0, 297, 210, 'F'); // Background hitam
 
-      rowsHtml += `
-          </tbody>
-        </table>
+      doc.setTextColor(255, 42, 42);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(16);
+      doc.text(`LAPORAN TRANSAKSI PEMBELIAN ${type.toUpperCase()}`, 14, 15);
+
+      doc.setTextColor(150, 150, 150);
+      doc.setFontSize(9);
+      doc.text("BEWARE OF DOGS OFFICIAL DATABASE", 14, 21);
+      doc.text(`Dicetak pada: ${new Date().toLocaleString('id-ID')}`, 220, 21);
+
+      // Garis Merah Pembatas Header
+      doc.setDrawColor(255, 42, 42);
+      doc.setLineWidth(0.5);
+      doc.line(14, 25, 283, 25);
+
+      // Header Kolom Tabel
+      let startY = 32;
+      doc.setFillColor(20, 20, 20);
+      doc.rect(14, startY - 5, 269, 8, 'F');
+
+      doc.setTextColor(255, 42, 42);
+      doc.setFontSize(9);
+      doc.text("ID Transaksi", 16, startY);
+      doc.text("Nama Pemesan", 50, startY);
+      if (type === 'baju') {
+        doc.text("Size", 125, startY);
+        doc.text("Qty", 145, startY);
+        doc.text("WhatsApp", 170, startY);
+        doc.text("Total Bayar", 215, startY);
+        doc.text("Tanggal", 250, startY);
+      } else {
+        doc.text("Qty", 135, startY);
+        doc.text("WhatsApp", 160, startY);
+        doc.text("Total Bayar", 210, startY);
+        doc.text("Tanggal", 250, startY);
+      }
+
+      startY += 6;
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(230, 230, 230);
+
+      // Isi Data Tabel
+      dataList.forEach((item, index) => {
+        if (startY > 185) { // Buat halaman baru jika melebihi batas bawah kertas
+          doc.addPage();
+          doc.setFillColor(8, 8, 8);
+          doc.rect(0, 0, 297, 210, 'F');
+          startY = 20;
+        }
+
+        doc.text(String(item.orderId), 16, startY);
+        doc.text(String(item.nama), 50, startY);
         
-        <div style="margin-top: 20px; padding-top: 12px; border-top: 2px solid #ff2a2a; display: flex; justify-content: space-between; align-items: center;">
-          <span style="font-size: 11px; color: #aaa;">Total Item Terjual: <b style="color:#fff;">${totalPcs} pcs</b></span>
-          <span style="font-size: 13px; font-weight: 900;">TOTAL OMSET: <span style="color:#00ff66; margin-left: 8px;">Rp ${numberWithCommas(grandTotal)}</span></span>
-        </div>
-      `;
+        if (type === 'baju') {
+          doc.text(String(item.size || '-'), 125, startY);
+          doc.text(String(item.pcs + ' pcs'), 145, startY);
+          doc.text(String(item.whatsapp), 170, startY);
+          doc.text(`Rp ${numberWithCommas(item.totalHarga)}`, 215, startY);
+          doc.text(String(item.dateFormatted), 250, startY);
+        } else {
+          doc.text(String(item.pcs + ' pcs'), 135, startY);
+          doc.text(String(item.whatsapp), 160, startY);
+          doc.text(`Rp ${numberWithCommas(item.totalHarga)}`, 210, startY);
+          doc.text(String(item.dateFormatted), 250, startY);
+        }
 
-      reportContent.innerHTML = rowsHtml;
-      
-      // Munculkan area laporan secara block agar ukurannya terbaca oleh html2pdf
-      reportArea.classList.remove('hidden');
-      reportArea.style.display = 'block';
-
-      const opt = {
-        margin:       0.3,
-        filename:     `Laporan_Riwayat_${type.toUpperCase()}_BOD.pdf`,
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, backgroundColor: '#000000', logging: false, useCORS: true },
-        jsPDF:        { unit: 'in', format: 'a4', orientation: 'landscape' }
-      };
-
-      html2pdf().set(opt).from(reportWrapper).save().then(() => {
-        reportArea.style.display = 'none';
-        reportArea.classList.add('hidden');
-      }).catch(err => {
-        console.error(err);
-        reportArea.style.display = 'none';
-        reportArea.classList.add('hidden');
-        showToast("Gagal mengunduh PDF Laporan", "error");
+        startY += 7;
       });
+
+      // Garis Bawah & Ringkasan Total Omset
+      startY += 2;
+      doc.setDrawColor(255, 42, 42);
+      doc.line(14, startY, 283, startY);
+
+      startY += 7;
+      const totalPcs = dataList.reduce((acc, curr) => acc + (parseInt(curr.pcs) || 0), 0);
+      const grandTotal = dataList.reduce((acc, curr) => acc + (parseInt(curr.totalHarga) || 0), 0);
+
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(200, 200, 200);
+      doc.text(`Total Item Terjual: ${totalPcs} pcs`, 14, startY);
+      doc.setTextColor(0, 255, 102);
+      doc.text(`TOTAL OMSET: Rp ${numberWithCommas(grandTotal)}`, 200, startY);
+
+      // Simpan file PDF
+      doc.save(`Laporan_Riwayat_${type.toUpperCase()}_BOD.pdf`);
+      showToast(`Laporan PDF ${type} berhasil diunduh!`);
     }
 
     // FUNGSI BARU: DOWNLOAD EXCEL LAPORAN
