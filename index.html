@@ -1322,7 +1322,7 @@ window.downloadPdfLaporan = function(type) {
 
       reportContent.innerHTML = rowsHtml;
       
-      // Munculkan elemen wrapper secara benar agar terbaca oleh html2pdf
+      // Munculkan elemen wrapper secara fixed agar terbaca oleh html2pdf
       reportArea.classList.remove('hidden');
       reportArea.style.display = 'block';
       reportArea.style.position = 'fixed';
@@ -1331,23 +1331,28 @@ window.downloadPdfLaporan = function(type) {
       reportArea.style.zIndex = '99999';
       reportArea.style.background = '#000000';
 
-      const opt = {
-        margin:       0.3,
-        filename:     `Laporan_Riwayat_${type.toUpperCase()}_BOD.pdf`,
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, backgroundColor: '#000000', logging: false, useCORS: true },
-        jsPDF:        { unit: 'in', format: 'a4', orientation: 'landscape' }
-      };
+      // Hitung waktu tunggu dinamis: minimal 500ms, ditambah 50ms per baris data riwayat
+      const dynamicDelay = Math.max(500, dataList.length * 50);
 
-      html2pdf().set(opt).from(reportWrapper).save().then(() => {
-        reportArea.style.display = 'none';
-        reportArea.classList.add('hidden');
-      }).catch(err => {
-        console.error(err);
-        reportArea.style.display = 'none';
-        reportArea.classList.add('hidden');
-        showToast("Gagal mengunduh PDF Laporan", "error");
-      });
+      setTimeout(() => {
+        const opt = {
+          margin:       0.3,
+          filename:     `Laporan_Riwayat_${type.toUpperCase()}_BOD.pdf`,
+          image:        { type: 'jpeg', quality: 0.98 },
+          html2canvas:  { scale: 2, backgroundColor: '#000000', logging: false, useCORS: true },
+          jsPDF:        { unit: 'in', format: 'a4', orientation: 'landscape' }
+        };
+
+        html2pdf().set(opt).from(reportWrapper).save().then(() => {
+          reportArea.style.display = 'none';
+          reportArea.classList.add('hidden');
+        }).catch(err => {
+          console.error(err);
+          reportArea.style.display = 'none';
+          reportArea.classList.add('hidden');
+          showToast("Gagal mengunduh PDF Laporan", "error");
+        });
+      }, dynamicDelay);
     }
 
     // FUNGSI BARU: DOWNLOAD EXCEL LAPORAN
