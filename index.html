@@ -13,6 +13,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,800;0,900;1,900&display=swap" rel="stylesheet">
   <!-- html2pdf.js for PDF Generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- SheetJS (xlsx) for Excel Export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
   <script>
     tailwind.config = {
@@ -469,6 +471,12 @@
 
             <div class="flex flex-wrap items-center gap-2">
               <button 
+                onclick="downloadExcelLaporan('baju')" 
+                class="px-4 py-2 bg-green-700 hover:bg-green-600 text-white text-xs font-bold rounded-xl transition-all shadow-md flex items-center gap-2"
+              >
+                <i class="fas fa-file-excel"></i> Download Excel Laporan Baju
+              </button>
+              <button 
                 onclick="downloadPdfLaporan('baju')" 
                 class="px-4 py-2 bg-bodRed hover:bg-bodDarkRed text-white text-xs font-bold rounded-xl transition-all shadow-md flex items-center gap-2"
               >
@@ -561,6 +569,12 @@
             </div>
 
             <div class="flex flex-wrap items-center gap-2">
+              <button 
+                onclick="downloadExcelLaporan('tiket')" 
+                class="px-4 py-2 bg-green-700 hover:bg-green-600 text-white text-xs font-bold rounded-xl transition-all shadow-md flex items-center gap-2"
+              >
+                <i class="fas fa-file-excel"></i> Download Excel Laporan Tiket
+              </button>
               <button 
                 onclick="downloadPdfLaporan('tiket')" 
                 class="px-4 py-2 bg-bodRed hover:bg-bodDarkRed text-white text-xs font-bold rounded-xl transition-all shadow-md flex items-center gap-2"
@@ -1236,12 +1250,6 @@ _Terima kasih telah memesan official merchandise / tiket BEWARE OF DOGS! Simpan 
     }
 
 window.downloadPdfLaporan = function(type) {
-      const reportTitle = document.getElementById('pdfReportTitle');
-      const reportContent = document.getElementById('pdfReportContent');
-      const reportArea = document.getElementById('pdfReportArea');
-      const reportWrapper = document.getElementById('pdfReportContentWrapper');
-      const printDateEl = document.getElementById('pdfPrintDate');
-
       // Ambil data sesuai pencarian/filter aktif saat didownload
       const dataList = type === 'baju' 
         ? window.bajuOrders.filter(item => {
@@ -1259,6 +1267,12 @@ window.downloadPdfLaporan = function(type) {
         showToast(`Tidak ada data riwayat ${type} yang sesuai untuk didownload!`, 'error');
         return;
       }
+
+      const reportTitle = document.getElementById('pdfReportTitle');
+      const reportContent = document.getElementById('pdfReportContent');
+      const reportArea = document.getElementById('pdfReportArea');
+      const reportWrapper = document.getElementById('pdfReportContentWrapper');
+      const printDateEl = document.getElementById('pdfPrintDate');
 
       printDateEl.innerText = new Date().toLocaleString('id-ID');
       reportTitle.innerText = `LAPORAN TRANSAKSI PEMBELIAN ${type.toUpperCase()}`;
@@ -1300,7 +1314,7 @@ window.downloadPdfLaporan = function(type) {
           </tbody>
         </table>
         
-        <div style="margin-top: 20px; padding-top: 12px; border-top: 2px solid #ff2a2a; display: flex; justify-space-between; align-items: center;">
+        <div style="margin-top: 20px; padding-top: 12px; border-top: 2px solid #ff2a2a; display: flex; justify-content: space-between; align-items: center;">
           <span style="font-size: 11px; color: #aaa;">Total Item Terjual: <b style="color:#fff;">${totalPcs} pcs</b></span>
           <span style="font-size: 13px; font-weight: 900;">TOTAL OMSET: <span style="color:#00ff66; margin-left: 8px;">Rp ${numberWithCommas(grandTotal)}</span></span>
         </div>
@@ -1308,7 +1322,7 @@ window.downloadPdfLaporan = function(type) {
 
       reportContent.innerHTML = rowsHtml;
       
-      // Tampilkan elemen PDF secara inline (bukan hidden tailwind) agar bisa dirender html2pdf dengan sempurna
+      // Pastikan elemen wrapper muncul sementara secara mutlak agar html2pdf dapat membaca isi elemen
       reportArea.classList.remove('hidden');
       reportArea.style.display = 'block';
       reportArea.style.position = 'absolute';
@@ -1334,65 +1348,71 @@ window.downloadPdfLaporan = function(type) {
       });
     }
 
-    window.switchTab = function(tab) {
-      const sections = {
-        baju: document.getElementById('tabBaju'),
-        tiket: document.getElementById('tabTiket'),
-        historyBaju: document.getElementById('tabHistoryBaju'),
-        historyTiket: document.getElementById('tabHistoryTiket')
-      };
+    // FUNGSI BARU: DOWNLOAD EXCEL LAPORAN
+    window.downloadExcelLaporan = function(type) {
+      const dataList = type === 'baju' 
+        ? window.bajuOrders.filter(item => {
+            const kw = document.getElementById('searchBajuInput').value.toLowerCase();
+            const nm = document.getElementById('filterBajuNama').value;
+            return (nm === "" || item.nama === nm) && (item.orderId.toLowerCase().includes(kw) || item.nama.toLowerCase().includes(kw) || item.whatsapp.toLowerCase().includes(kw));
+          })
+        : window.tiketOrders.filter(item => {
+            const kw = document.getElementById('searchTiketInput').value.toLowerCase();
+            const nm = document.getElementById('filterTiketNama').value;
+            return (nm === "" || item.nama === nm) && (item.orderId.toLowerCase().includes(kw) || item.nama.toLowerCase().includes(kw) || item.whatsapp.toLowerCase().includes(kw));
+          });
 
-      const buttons = {
-        baju: document.getElementById('tabBtnBaju'),
-        tiket: document.getElementById('tabBtnTiket'),
-        historyBaju: document.getElementById('tabBtnHistoryBaju'),
-        historyTiket: document.getElementById('tabBtnHistoryTiket')
-      };
+      if (!dataList || dataList.length === 0) {
+        showToast(`Tidak ada data riwayat ${type} yang sesuai untuk didownload ke Excel!`, 'error');
+        return;
+      }
 
-      const activeClass = "bg-bodRed text-white shadow-lg shadow-bodRed/30";
-      const inactiveClass = "bg-transparent text-gray-400 hover:text-white hover:bg-bodBorder/50";
-
-      Object.keys(sections).forEach(key => {
-        sections[key].classList.add('hidden');
-        buttons[key].className = `py-3 px-3 rounded-xl font-extrabold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2 ${inactiveClass}`;
+      // Format data agar rapi di Excel
+      const excelData = dataList.map((item, index) => {
+        let baseObj = {
+          "No": index + 1,
+          "ID Transaksi": item.orderId,
+          "Nama Pemesan": item.nama,
+        };
+        if (type === 'baju') {
+          baseObj["Size Baju"] = item.size || '-';
+        }
+        baseObj["Jumlah (Pcs)"] = item.pcs;
+        baseObj["Harga Satuan"] = item.hargaSatuan || 0;
+        baseObj["Total Harga"] = item.totalHarga;
+        baseObj["No. WhatsApp"] = item.whatsapp;
+        baseObj["Tanggal Transaksi"] = item.dateFormatted;
+        return baseObj;
       });
 
-      sections[tab].classList.remove('hidden');
-      buttons[tab].className = `py-3 px-3 rounded-xl font-extrabold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2 ${activeClass}`;
-    }
+      // Tambahkan baris total di bagian bawah
+      const totalPcs = dataList.reduce((acc, curr) => acc + (parseInt(curr.pcs) || 0), 0);
+      const grandTotal = dataList.reduce((acc, curr) => acc + (parseInt(curr.totalHarga) || 0), 0);
 
-    function formatPhoneNumber(phone) {
-      let cleaned = phone.replace(/\D/g, '');
-      if (cleaned.startsWith('0')) {
-        cleaned = '62' + cleaned.slice(1);
+      let summaryRow = {
+        "No": "TOTAL",
+        "ID Transaksi": "",
+        "Nama Pemesan": "",
+      };
+      if (type === 'baju') {
+        summaryRow["Size Baju"] = "";
       }
-      return cleaned;
-    }
+      summaryRow["Jumlah (Pcs)"] = totalPcs;
+      summaryRow["Harga Satuan"] = "";
+      summaryRow["Total Harga"] = grandTotal;
+      summaryRow["No. WhatsApp"] = "";
+      summaryRow["Tanggal Transaksi"] = "";
 
-    function numberWithCommas(x) {
-      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    }
+      excelData.push(summaryRow);
 
-    function escapeHtml(str) {
-      return str ? str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") : '';
-    }
+      // Buat workbook dan worksheet SheetJS
+      const worksheet = XLSX.utils.json_to_sheet(excelData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, `Laporan ${type.toUpperCase()}`);
 
-    function showToast(msg, type = 'success') {
-      const toast = document.createElement('div');
-      toast.className = `fixed bottom-5 right-5 z-50 px-4 py-3 rounded-xl shadow-2xl text-xs font-bold flex items-center gap-2 transition-all duration-300 transform translate-y-10 opacity-0 ${
-        type === 'error' ? 'bg-red-600 text-white' : 'bg-green-600 text-white'
-      }`;
-      toast.innerHTML = `<i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle'} text-base"></i> ${msg}`;
-      document.body.appendChild(toast);
-
-      setTimeout(() => {
-        toast.classList.remove('translate-y-10', 'opacity-0');
-      }, 50);
-
-      setTimeout(() => {
-        toast.classList.add('translate-y-10', 'opacity-0');
-        setTimeout(() => toast.remove(), 300);
-      }, 3500);
+      // Unduh file Excel
+      XLSX.writeFile(workbook, `Laporan_Riwayat_${type.toUpperCase()}_BOD.xlsx`);
+      showToast(`Laporan Excel ${type} berhasil diunduh!`);
     }
   </script>
 
