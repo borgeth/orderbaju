@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beware Of Dogs - Official Store</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Font: Montserrat -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,800;0,900;1,900&display=swap" rel="stylesheet">
+  <!-- html2pdf.js for PDF Generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            bodRed: '#ff2a2a',
+            bodDarkRed: '#880000',
+            bodBlack: '#080808',
+            bodCard: '#121212',
+            bodBorder: '#222222'
+          },
+          fontFamily: {
+            sans: ['Montserrat', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #050505;
+      color: #f3f4f6;
+      font-family: 'Montserrat', sans-serif;
+    }
+    .gradient-glow {
+      box-shadow: 0 0 30px rgba(255, 42, 42, 0.2);
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #ffffff 0%, #ff2a2a 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0a0a0a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #333;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #ff2a2a;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased selection:bg-bodRed selection:text-white">
+
+  <!-- LOGIN OVERLAY / MODAL -->
+  <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-cover bg-center relative" style="background-image: url('WhatsApp Video 2026-10-19 at 22.57.43.mp4');">
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
+
+    <div class="bg-bodCard/95 border-2 border-bodRed rounded-2xl max-w-sm w-full p-6 sm:p-8 shadow-[0_0_50px_rgba(255,42,42,0.35)] text-center relative z-10">
+      <div class="flex justify-center mb-4">
+        <img 
+          src="WhatsApp Image 2026-10-17 at 16.14.10.jpeg.png" 
+          alt="Beware Of Dogs Logo" 
+          class="h-16 w-auto object-contain drop-shadow-[0_5px_15px_rgba(255,42,42,0.5)]"
+          onerror="this.onerror=null; this.src='https://placehold.co/200x200/000000/ffffff?text=BOD';"
+        >
+      </div>
+      <h3 class="text-xl font-black text-white uppercase tracking-wider mb-1">RESTRICTED ACCESS</h3>
+      <p class="text-xs text-gray-400 mb-6">Silakan login untuk mengakses database & sistem</p>
+
+      <form onsubmit="handleLogin(event)" class="space-y-4 text-left">
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-300 mb-1">Username</label>
+          <input 
+            type="text" 
+            id="loginUser" 
+            required 
+            placeholder="Masukkan username" 
+            class="w-full bg-black/90 border border-bodBorder focus:border-bodRed focus:ring-1 focus:ring-bodRed rounded-xl py-3 px-4 text-sm text-white placeholder-gray-600 outline-none transition-all"
+          >
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-300 mb-1">Password</label>
+          <input 
+            type="password" 
+            id="loginPass" 
+            required 
+            placeholder="Masukkan password" 
+            class="w-full bg-black/90 border border-bodBorder focus:border-bodRed focus:ring-1 focus:ring-bodRed rounded-xl py-3 px-4 text-sm text-white placeholder-gray-600 outline-none transition-all"
+          >
+        </div>
+
+        <button 
+          type="submit" 
+          class="w-full bg-gradient-to-r from-bodRed to-bodDarkRed hover:from-red-600 hover:to-bodRed text-white font-extrabold py-3.5 px-4 rounded-xl shadow-lg shadow-bodRed/30 transition-all uppercase text-xs tracking-wider cursor-pointer mt-2"
+        >
+          Login Sistem
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MAIN APP CONTAINER -->
+  <div id="appContainer" class="hidden flex-col min-h-screen justify-between">
+
+    <!-- HEADER -->
+    <header class="relative border-b border-bodBorder bg-black/90 backdrop-blur-md sticky top-0 z-40">
+      <div class="max-w-6xl mx-auto px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-4">
+        
+        <div class="flex items-center gap-4">
+          <div class="relative group">
+            <div class="absolute -inset-1 bg-gradient-to-r from-bodRed to-bodDarkRed rounded-lg blur opacity-40 group-hover:opacity-100 transition duration-300"></div>
+            <img 
+              src="WhatsApp Image 2026-10-17 at 16.14.10.jpeg.png" 
+              alt="Beware Of Dogs Logo" 
+              class="relative h-14 w-auto object-contain rounded-md border border-bodBorder bg-black"
+              onerror="this.onerror=null; this.src='https://placehold.co/200x200/000000/ffffff?text=BEWARE+OF+DOGS';"
+            >
+          </div>
+          <div>
+            <h1 class="text-xl font-black tracking-wider uppercase gradient-text">
+              BEWARE OF DOGS ORGANIZE
+            </h1>
+            <p class="text-[10px] text-gray-400 tracking-widest uppercase font-bold flex items-center gap-1.5">
+              <span>BOD DATABASE</span>
+              <span id="headerStatusBadge" class="inline-block w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <div class="px-3 py-2 bg-bodCard border border-bodBorder rounded-xl text-xs font-bold text-gray-200 flex items-center gap-2 shadow-md">
+            <i class="fas fa-database text-bodRed"></i>
+            <span>Realtime Active</span>
+          </div>
+          <button onclick="handleLogout()" class="px-3 py-2 bg-red-950/40 border border-red-800/60 hover:bg-red-900 text-red-400 hover:text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5" title="Logout">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Keluar</span>
+          </button>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="max-w-5xl mx-auto px-4 py-8 w-full flex-grow">
+
+      <!-- HERO BANNER -->
+      <div class="bg-gradient-to-b from-bodCard to-black border border-bodBorder rounded-2xl p-6 sm:p-8 text-center relative overflow-hidden mb-8 gradient-glow">
+        <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-bodRed/10 rounded-full blur-3xl pointer-events-none"></div>
+        
+        <div class="flex justify-center mb-4">
+          <img 
+            src="WhatsApp Image 2026-10-17 at 16.14.10.jpeg" 
+            alt="Beware Of Dogs Logo Large" 
+            class="h-28 sm:h-36 w-auto object-contain drop-shadow-[0_10px_25px_rgba(255,42,42,0.35)] transition-transform duration-500 hover:scale-105"
+          >
+        </div>
+
+        <h2 class="text-2xl sm:text-4xl font-black uppercase tracking-tight text-white mb-2">
+          OFFICIAL STORE
+        </h2>
+        <p class="text-gray-400 text-xs sm:text-sm max-w-xl mx-auto font-medium">
+          Pemesanan T-shirt & Tiket Nobar.
+        </p>
+      </div>
+
+      <!-- MAIN TAB NAVIGATION -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 p-1.5 bg-bodCard border border-bodBorder rounded-2xl mb-8 shadow-xl">
+        <button 
+          id="tabBtnBaju" 
+          onclick="switchTab('baju')" 
+          class="py-3 px-3 rounded-xl font-extrabold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2 bg-bodRed text-white shadow-lg shadow-bodRed/30"
+        >
+          <i class="fas fa-tshirt"></i>
+          <span>Beli Baju</span>
+        </button>
+
+        <button 
+          id="tabBtnTiket" 
+          onclick="switchTab('tiket')" 
+          class="py-3 px-3 rounded-xl font-extrabold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2 bg-transparent text-gray-400 hover:text-white hover:bg-bodBorder/50"
+        >
+          <i class="fas fa-ticket-alt"></i>
+          <span>Beli Tiket</span>
+        </button>
+
+        <button 
+          id="tabBtnHistoryBaju" 
+          onclick="switchTab('historyBaju')" 
+          class="py-3 px-3 rounded-xl font-extrabold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2 bg-transparent text-gray-400 hover:text-white hover:bg-bodBorder/50"
+        >
+          <i class="fas fa-boxes"></i>
+          <span>Riwayat Baju</span>
+        </button>
+
+        <button 
+          id="tabBtnHistoryTiket" 
+          onclick="switchTab('historyTiket')" 
+          class="py-3 px-3 rounded-xl font-extrabold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2 bg-transparent text-gray-400 hover:text-white hover:bg-bodBorder/50"
+        >
+          <i class="fas fa-clipboard-list"></i>
+          <span>Riwayat Tiket</span>
+        </button>
+      </div>
+
+      <!-- TAB 1: FORM PEMBELIAN BAJU -->
+      <section id="tabBaju" class="block">
+        <div class="bg-bodCard border border-bodBorder rounded-2xl p-6 sm:p-8 shadow-2xl relative">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-bodBorder pb-4 mb-6 gap-2">
+            <div>
+              <h3 class="text-xl font-black text-white flex items-center gap-2 uppercase">
+                <i class="fas fa-tshirt text-bodRed"></i> Form Pembelian Baju
+              </h3>
+              <p class="text-xs text-gray-400 mt-1">Data tersimpan otomatis di BOD Database</p>
+            </div>
+            <span class="text-xs font-black bg-bodRed/20 border border-bodRed/50 text-bodRed px-3 py-1.5 rounded-lg self-start sm:self-auto">
+              Official Merchandise
+            </span>
+          </div>
+
+          <form id="formBaju" onsubmit="handleBajuOrder(event)" class="space-y-5">
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-2">Nama Pemesan</label>
+              <div class="relative">
+                <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                <input 
+                  type="text" 
+                  id="bajuNama" 
+                  required 
+                  placeholder="Masukkan nama lengkap" 
+                  class="w-full bg-black/90 border border-bodBorder focus:border-bodRed focus:ring-1 focus:ring-bodRed rounded-xl py-3 pl-11 pr-4 text-sm text-white placeholder-gray-600 outline-none transition-all"
+                >
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-2">Size Baju</label>
+                <div class="relative">
+                  <i class="fas fa-ruler-combined absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                  <select 
+                    id="bajuSize" 
+                    required 
+                    class="w-full bg-black/90 border border-bodBorder focus:border-bodRed focus:ring-1 focus:ring-bodRed rounded-xl py-3 pl-11 pr-4 text-sm text-white outline-none transition-all appearance-none cursor-pointer"
+                  >
+                    <option value="" disabled selected>Pilih Ukuran</option>
+                    <option value="S">S (Small)</option>
+                    <option value="M">M (Medium)</option>
+                    <option value="L">L (Large)</option>
+                    <option value="XL">XL (Extra Large)</option>
+                    <option value="XXL">XXL (Double XL)</option>
+                  </select>
+                  <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none text-xs"></i>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-2">Jumlah (Pcs)</label>
+                <div class="relative">
+                  <i class="fas fa-sort-numeric-up absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                  <input 
+                    type="number" 
+                    id="bajuPcs" 
+                    min="1" 
+                    value="1" 
+                    required 
+                    oninput="calculateBajuTotal()"
+                    class="w-full bg-black/90 border border-bodBorder focus:border-bodRed focus:ring-1 focus:ring-bodRed rounded-xl py-3 pl-11 pr-4 text-sm text-white outline-none transition-all"
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-2">Harga Satuan (Rp)</label>
+                <div class="relative">
+                  <i class="fas fa-tag absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                  <input 
+                    type="number" 
+                    id="bajuHarga" 
+                    value="180000" 
+                    required 
+                    oninput="calculateBajuTotal()"
+                    class="w-full bg-black/90 border border-bodBorder focus:border-bodRed focus:ring-1 focus:ring-bodRed rounded-xl py-3 pl-11 pr-4 text-sm text-white outline-none transition-all"
+                  >
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-2">Nomor WhatsApp</label>
+                <div class="relative">
+                  <i class="fab fa-whatsapp absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-base"></i>
+                  <input 
+                    type="tel" 
+                    id="bajuWa" 
+                    required 
+                    placeholder="Contoh: 081234567890" 
+                    class="w-full bg-black/90 border border-bodBorder focus:border-bodRed focus:ring-1 focus:ring-bodRed rounded-xl py-3 pl-11 pr-4 text-sm text-white placeholder-gray-600 outline-none transition-all"
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-black/60 border border-bodBorder rounded-xl p-4 flex justify-between items-center">
+              <span class="text-xs text-gray-400 font-bold uppercase">Total Pembayaran:</span>
+              <span id="bajuTotalDisplay" class="text-xl font-black text-bodRed">Rp 180.000</span>
+            </div>
+
+            <div class="pt-2">
+              <button 
+                type="submit" 
+                id="btnBajuSubmit"
+                class="w-full bg-gradient-to-r from-bodRed to-bodDarkRed hover:from-red-600 hover:to-bodRed text-white font-extrabold py-4 px-6 rounded-xl shadow-lg shadow-bodRed/30 hover:shadow-bodRed/50 transition-all duration-300 flex items-center justify-center gap-2 tracking-wider uppercase text-sm cursor-pointer"
+              >
+                <i class="fas fa-save"></i>
+                <span>Simpan & Buat Struk WA / PDF</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- TAB 2: FORM PEMBELIAN TIKET -->
+      <section id="tabTiket" class="hidden">
+        <div class="bg-bodCard border border-bodBorder rounded-2xl p-6 sm:p-8 shadow-2xl relative">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-bodBorder pb-4 mb-6 gap-2">
+            <div>
+              <h3 class="text-xl font-black text-white flex items-center gap-2 uppercase">
+                <i class="fas fa-ticket-alt text-bodRed"></i> Form Pembelian Tiket
+              </h3>
+              <p class="text-xs text-gray-400 mt-1">Data tersimpan otomatis di Firebase Realtime Database</p>
+            </div>
+            <span class="text-xs font-black bg-bodRed/20 border border-bodRed/50 text-bodRed px-3 py-1.5 rounded-lg self-start sm:self-auto">
+              Live Event Ticket
+            </span>
+          </div>
+
+          <form id="formTiket" onsubmit="handleTiketOrder(event)" class="space-y-5">
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-2">Nama Pemesan</label>
+              <div class="relative">
+                <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                <input 
+                  type="text" 
+                  id="tiketNama" 
+                  required 
+                  placeholder="Masukkan nama lengkap" 
+                  class="w-full bg-black/90 border border-bodBorder focus:border-bodRed focus:ring-1 focus:ring-bodRed rounded-xl py-3 pl-11 pr-4 text-sm text-white placeholder-gray-600 outline-none transition-all"
+                >
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-2">Jumlah Tiket (Pcs)</label>
+                <div class="relative">
+                  <i class="fas fa-sort-numeric-up absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                  <input 
+                    type="number" 
+                    id="tiketPcs" 
+                    min="1" 
+                    value="1" 
+                    required 
+                    oninput="calculateTiketTotal()"
+                    class="w-full bg-black/90 border border-bodBorder focus:border-bodRed focus:ring-1 focus:ring-bodRed rounded-xl py-3 pl-11 pr-4 text-sm text-white outline-none transition-all"
+                  >
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-2">Harga Satuan (Rp)</label>
+                <div class="relative">
+                  <i class="fas fa-money-bill-wave absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                  <input 
+                    type="number" 
+                    id="tiketHarga" 
+                    value="20000" 
+                    required 
+                    oninput="calculateTiketTotal()"
+                    class="w-full bg-black/90 border border-bodBorder focus:border-bodRed focus:ring-1 focus:ring-bodRed rounded-xl py-3 pl-11 pr-4 text-sm text-white outline-none transition-all"
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-2">Nomor WhatsApp</label>
+              <div class="relative">
+                <i class="fab fa-whatsapp absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-base"></i>
+                <input 
+                  type="tel" 
+                  id="tiketWa" 
+                  required 
+                  placeholder="Contoh: 081234567890" 
+                  class="w-full bg-black/90 border border-bodBorder focus:border-bodRed focus:ring-1 focus:ring-bodRed rounded-xl py-3 pl-11 pr-4 text-sm text-white placeholder-gray-600 outline-none transition-all"
+                >
+              </div>
+            </div>
+
+            <div class="bg-black/60 border border-bodBorder rounded-xl p-4 flex justify-between items-center">
+              <span class="text-xs text-gray-400 font-bold uppercase">Total Pembayaran:</span>
+              <span id="tiketTotalDisplay" class="text-xl font-black text-bodRed">Rp 20.000</span>
+            </div>
+
+            <div class="pt-2">
+              <button 
+                type="submit" 
+                id="btnTiketSubmit"
+                class="w-full bg-gradient-to-r from-bodRed to-bodDarkRed hover:from-red-600 hover:to-bodRed text-white font-extrabold py-4 px-6 rounded-xl shadow-lg shadow-bodRed/30 hover:shadow-bodRed/50 transition-all duration-300 flex items-center justify-center gap-2 tracking-wider uppercase text-sm cursor-pointer"
+              >
+                <i class="fas fa-save"></i>
+                <span>Simpan & Buat Struk WA / PDF</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- TAB 3: RIWAYAT PEMBELIAN BAJU -->
+      <section id="tabHistoryBaju" class="hidden">
+        <div class="bg-bodCard border border-bodBorder rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6">
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="bg-black/80 border border-bodRed/40 p-5 rounded-2xl flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-bodRed/20 border border-bodRed/50 flex items-center justify-center text-bodRed text-xl">
+                <i class="fas fa-tshirt"></i>
+              </div>
+              <div>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Baju Terjual</p>
+                <h4 id="panelBajuPcs" class="text-2xl font-black text-white mt-0.5">0 Pcs</h4>
+              </div>
+            </div>
+
+            <div class="bg-black/80 border border-bodRed/40 p-5 rounded-2xl flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-green-500/20 border border-green-500/50 flex items-center justify-center text-green-400 text-xl">
+                <i class="fas fa-wallet"></i>
+              </div>
+              <div>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Pendapatan Baju</p>
+                <h4 id="panelBajuOmset" class="text-2xl font-black text-green-400 mt-0.5">Rp 0</h4>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-bodBorder pb-4">
+            <div>
+              <h3 class="text-xl font-black text-white flex items-center gap-2 uppercase">
+                <i class="fas fa-tshirt text-bodRed"></i> Riwayat Pembelian Baju
+              </h3>
+              <p class="text-xs text-gray-400 mt-1">Data riwayat transaksi baju tersinkronisasi realtime di BOD Database</p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+              <button 
+                onclick="downloadPdfLaporan('baju')" 
+                class="px-4 py-2 bg-bodRed hover:bg-bodDarkRed text-white text-xs font-bold rounded-xl transition-all shadow-md flex items-center gap-2"
+              >
+                <i class="fas fa-file-pdf"></i> Download PDF Laporan Baju
+              </button>
+            </div>
+          </div>
+
+          <!-- PENCARIAN & FILTER NAMA PEMESAN BAJU -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+            <div class="relative">
+              <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
+              <input 
+                type="text" 
+                id="searchBajuInput" 
+                oninput="filterBajuData()" 
+                placeholder="Cari ID, Nama, atau WhatsApp..." 
+                class="w-full bg-black/90 border border-bodBorder focus:border-bodRed rounded-xl py-2.5 pl-10 pr-4 text-xs text-white placeholder-gray-500 outline-none"
+              >
+            </div>
+            <div class="relative">
+              <i class="fas fa-filter absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
+              <select 
+                id="filterBajuNama" 
+                onchange="filterBajuData()" 
+                class="w-full bg-black/90 border border-bodBorder focus:border-bodRed rounded-xl py-2.5 pl-10 pr-8 text-xs text-white outline-none appearance-none cursor-pointer"
+              >
+                <option value="">Semua Nama Pemesan</option>
+              </select>
+              <i class="fas fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none text-[10px]"></i>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs font-mono">
+              <thead>
+                <tr class="border-b border-bodBorder text-gray-400 uppercase font-sans">
+                  <th class="py-3 px-2">ID</th>
+                  <th class="py-3 px-2">Nama Pemesan</th>
+                  <th class="py-3 px-2">Size</th>
+                  <th class="py-3 px-2">Pcs</th>
+                  <th class="py-3 px-2">WhatsApp</th>
+                  <th class="py-3 px-2">Total</th>
+                  <th class="py-3 px-2">Tanggal</th>
+                  <th class="py-3 px-2 text-center">Aksi / Struk</th>
+                </tr>
+              </thead>
+              <tbody id="tableBajuBody" class="divide-y divide-bodBorder text-gray-200">
+                <tr>
+                  <td colspan="8" class="text-center py-6 text-gray-500 italic">Memuat data riwayat baju...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: RIWAYAT PEMBELIAN TIKET -->
+      <section id="tabHistoryTiket" class="hidden">
+        <div class="bg-bodCard border border-bodBorder rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6">
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="bg-black/80 border border-bodRed/40 p-5 rounded-2xl flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-bodRed/20 border border-bodRed/50 flex items-center justify-center text-bodRed text-xl">
+                <i class="fas fa-ticket-alt"></i>
+              </div>
+              <div>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Tiket Terjual</p>
+                <h4 id="panelTiketPcs" class="text-2xl font-black text-white mt-0.5">0 Pcs</h4>
+              </div>
+            </div>
+
+            <div class="bg-black/80 border border-bodRed/40 p-5 rounded-2xl flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-green-500/20 border border-green-500/50 flex items-center justify-center text-green-400 text-xl">
+                <i class="fas fa-wallet"></i>
+              </div>
+              <div>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Pendapatan Tiket</p>
+                <h4 id="panelTiketOmset" class="text-2xl font-black text-green-400 mt-0.5">Rp 0</h4>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-bodBorder pb-4">
+            <div>
+              <h3 class="text-xl font-black text-white flex items-center gap-2 uppercase">
+                <i class="fas fa-ticket-alt text-bodRed"></i> Riwayat Pembelian Tiket
+              </h3>
+              <p class="text-xs text-gray-400 mt-1">Data riwayat transaksi tiket tersinkronisasi realtime di BOD Database</p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+              <button 
+                onclick="downloadPdfLaporan('tiket')" 
+                class="px-4 py-2 bg-bodRed hover:bg-bodDarkRed text-white text-xs font-bold rounded-xl transition-all shadow-md flex items-center gap-2"
+              >
+                <i class="fas fa-file-pdf"></i> Download PDF Laporan Tiket
+              </button>
+            </div>
+          </div>
+
+          <!-- PENCARIAN & FILTER NAMA PEMESAN TIKET -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+            <div class="relative">
+              <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
+              <input 
+                type="text" 
+                id="searchTiketInput" 
+                oninput="filterTiketData()" 
+                placeholder="Cari ID, Nama, atau WhatsApp..." 
+                class="w-full bg-black/90 border border-bodBorder focus:border-bodRed rounded-xl py-2.5 pl-10 pr-4 text-xs text-white placeholder-gray-500 outline-none"
+              >
+            </div>
+            <div class="relative">
+              <i class="fas fa-filter absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
+              <select 
+                id="filterTiketNama" 
+                onchange="filterTiketData()" 
+                class="w-full bg-black/90 border border-bodBorder focus:border-bodRed rounded-xl py-2.5 pl-10 pr-8 text-xs text-white outline-none appearance-none cursor-pointer"
+              >
+                <option value="">Semua Nama Pemesan</option>
+              </select>
+              <i class="fas fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none text-[10px]"></i>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs font-mono">
+              <thead>
+                <tr class="border-b border-bodBorder text-gray-400 uppercase font-sans">
+                  <th class="py-3 px-2">ID</th>
+                  <th class="py-3 px-2">Nama Pemesan</th>
+                  <th class="py-3 px-2">Pcs</th>
+                  <th class="py-3 px-2">WhatsApp</th>
+                  <th class="py-3 px-2">Total</th>
+                  <th class="py-3 px-2">Tanggal</th>
+                  <th class="py-3 px-2 text-center">Aksi / Struk</th>
+                </tr>
+              </thead>
+              <tbody id="tableTiketBody" class="divide-y divide-bodBorder text-gray-200">
+                <tr>
+                  <td colspan="7" class="text-center py-6 text-gray-500 italic">Memuat data riwayat tiket...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- MODAL EDIT RIWAYAT TRANSAKSI -->
+    <div id="editModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden items-center justify-center p-4">
+      <div class="bg-black border-2 border-bodRed rounded-2xl max-w-md w-full overflow-hidden shadow-[0_0_50px_rgba(255,42,42,0.35)]">
+        <div class="bg-gradient-to-r from-bodRed to-bodDarkRed p-4 text-center relative">
+          <button onclick="closeEditModal()" class="absolute right-4 top-4 text-white/80 hover:text-white text-lg">
+            <i class="fas fa-times"></i>
+          </button>
+          <h3 class="text-lg font-black text-white tracking-widest uppercase">EDIT RIWAYAT TRANSAKSI</h3>
+          <p id="editOrderIdDisplay" class="text-[10px] text-white/80 font-mono mt-0.5">-</p>
+        </div>
+
+        <form id="editForm" onsubmit="saveEditOrder(event)" class="p-6 space-y-4 text-xs font-sans">
+          <input type="hidden" id="editItemType">
+          <input type="hidden" id="editOrderId">
+
+          <div>
+            <label class="block font-bold text-gray-300 mb-1 uppercase">Nama Pemesan</label>
+            <input type="text" id="editNama" required class="w-full bg-bodCard border border-bodBorder rounded-xl p-3 text-white outline-none focus:border-bodRed">
+          </div>
+
+          <div id="editSizeContainer">
+            <label class="block font-bold text-gray-300 mb-1 uppercase">Ukuran Baju</label>
+            <select id="editSize" class="w-full bg-bodCard border border-bodBorder rounded-xl p-3 text-white outline-none focus:border-bodRed">
+              <option value="S">S (Small)</option>
+              <option value="M">M (Medium)</option>
+              <option value="L">L (Large)</option>
+              <option value="XL">XL (Extra Large)</option>
+              <option value="XXL">XXL (Double XL)</option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-bold text-gray-300 mb-1 uppercase">Jumlah (Pcs)</label>
+              <input type="number" id="editPcs" min="1" required class="w-full bg-bodCard border border-bodBorder rounded-xl p-3 text-white outline-none focus:border-bodRed">
+            </div>
+            <div>
+              <label class="block font-bold text-gray-300 mb-1 uppercase">Harga Satuan (Rp)</label>
+              <input type="number" id="editHarga" required class="w-full bg-bodCard border border-bodBorder rounded-xl p-3 text-white outline-none focus:border-bodRed">
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-bold text-gray-300 mb-1 uppercase">WhatsApp</label>
+            <input type="tel" id="editWa" required class="w-full bg-bodCard border border-bodBorder rounded-xl p-3 text-white outline-none focus:border-bodRed">
+          </div>
+
+          <div class="pt-2 flex gap-2">
+            <button type="submit" id="btnEditSave" class="flex-1 bg-bodRed hover:bg-bodDarkRed text-white font-extrabold py-3 rounded-xl transition-all uppercase tracking-wider">
+              Simpan Perubahan
+            </button>
+            <button type="button" onclick="closeEditModal()" class="px-4 bg-bodBorder hover:bg-gray-800 text-gray-300 font-bold rounded-xl transition-all">
+              Batal
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- HIDDEN AREA UNTUK GENERATE PDF LAPORAN -->
+    <div id="pdfReportArea" class="hidden">
+      <div id="pdfReportContentWrapper" style="padding: 24px; background-color: #000000; color: #ffffff; font-family: 'Montserrat', sans-serif; width: 800px; margin: 0 auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #ff2a2a; padding-bottom: 12px; margin-bottom: 16px;">
+          <div>
+            <h2 id="pdfReportTitle" style="font-size: 18px; font-weight: 900; color: #ff2a2a; text-transform: uppercase; margin: 0;">LAPORAN RIWAYAT TRANSAKSI</h2>
+            <p style="font-size: 11px; color: #aaa; margin: 4px 0 0 0;">BEWARE OF DOGS OFFICIAL DATABASE</p>
+          </div>
+          <div style="text-align: right; font-size: 10px; color: #888;">
+            <p style="margin: 0;">Dicetak pada: <span id="pdfPrintDate">-</span></p>
+          </div>
+        </div>
+        <div id="pdfReportContent"></div>
+      </div>
+    </div>
+
+    <!-- DIGITAL RECEIPT POPUP -->
+    <div id="receiptModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden items-center justify-center p-4">
+      <div class="bg-black border-2 border-bodRed rounded-2xl max-w-md w-full overflow-hidden shadow-[0_0_50px_rgba(255,42,42,0.35)] relative">
+        
+        <div id="receiptPrintCard">
+          <div class="bg-gradient-to-r from-bodRed to-bodDarkRed p-5 text-center relative">
+            <button onclick="closeReceiptModal()" class="absolute right-4 top-4 text-white/80 hover:text-white text-lg">
+              <i class="fas fa-times"></i>
+            </button>
+            <img src="WhatsApp Image 2026-10-17 at 16.14.10.jpeg" alt="Beware Of Dogs Logo" class="h-14 w-auto mx-auto object-contain mb-2">
+            <h3 class="text-xl font-black text-white tracking-widest uppercase">BEWARE OF DOGS</h3>
+            <p class="text-[10px] text-white/80 font-mono mt-0.5">OFFICIAL STRUK PEMBELIAN</p>
+          </div>
+
+          <div class="p-6 font-mono text-xs space-y-3.5 bg-bodCard text-gray-200">
+            <div class="flex justify-between items-center border-b border-bodBorder pb-2.5">
+              <span class="text-gray-400">NO. TRANSAKSI:</span>
+              <span id="recId" class="font-bold text-bodRed text-sm">BOD-000000</span>
+            </div>
+
+            <div class="space-y-2 border-b border-bodBorder pb-3">
+              <div class="flex justify-between">
+                <span class="text-gray-400">Tipe Pesanan:</span>
+                <span id="recTipe" class="font-bold text-white">-</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-400">Nama Pemesan:</span>
+                <span id="recNama" class="font-bold text-white">-</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-400">Detail Item:</span>
+                <span id="recDetail" class="font-bold text-white">-</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-400">No. WhatsApp:</span>
+                <span id="recWa" class="font-bold text-white">-</span>
+              </div>
+              <div class="flex justify-between text-[11px] text-gray-500 pt-1">
+                <span>Tanggal:</span>
+                <span id="recTanggal">-</span>
+              </div>
+            </div>
+
+            <div class="flex justify-between items-center pt-1 text-sm">
+              <span class="font-bold text-white uppercase">TOTAL BAYAR:</span>
+              <span id="recTotal" class="font-black text-bodRed text-lg">Rp 0</span>
+            </div>
+
+            <div id="storageSaveBadge" class="bg-green-950/40 border border-green-800/60 rounded-xl p-2.5 text-center text-[11px] text-green-400 font-sans flex items-center justify-center gap-2">
+              <i class="fas fa-check-circle"></i>
+              <span id="saveBadgeText">Tersimpan Realtime ke Firebase Database</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-4 bg-black border-t border-bodBorder flex flex-col gap-2 font-sans">
+          <button 
+            onclick="sendReceiptToWa()" 
+            class="w-full bg-green-600 hover:bg-green-500 text-white font-extrabold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-green-900/30 transition-all text-xs tracking-wider uppercase cursor-pointer"
+          >
+            <i class="fab fa-whatsapp text-lg"></i>
+            <span>Kirim Struk via WhatsApp</span>
+          </button>
+
+          <button 
+            onclick="downloadReceiptPdf()" 
+            class="w-full bg-bodRed hover:bg-bodDarkRed text-white font-extrabold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-bodRed/30 transition-all text-xs tracking-wider uppercase cursor-pointer"
+          >
+            <i class="fas fa-file-pdf text-lg"></i>
+            <span>Download PDF Struk</span>
+          </button>
+
+          <button 
+            onclick="closeReceiptModal()" 
+            class="w-full bg-bodBorder hover:bg-gray-800 text-gray-400 hover:text-white font-semibold py-2 px-4 rounded-xl text-xs transition-all"
+          >
+            Tutup
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-bodBorder bg-black py-6 mt-12 text-center text-gray-500 text-xs">
+      <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div class="flex items-center gap-2">
+          <img src="WhatsApp Image 2026-10-17 at 16.14.10.jpeg" alt="Beware Of Dogs Mini" class="h-6 w-auto object-contain">
+          <span class="font-bold text-gray-300 uppercase">BEWARE OF DOGS ORGANIZE</span>
+        </div>
+        <p>&copy; 2026 Beware Of Dogs Official. All rights reserved.</p>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- FIREBASE & CORE JAVASCRIPT LOGIC -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-analytics.js";
+    import { getDatabase, ref, set, onValue, update, remove } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCPhTTD5cAjvojNu4pAEXOGEoIkipyPo5k",
+      authDomain: "bewareofdogs-af4a5.firebaseapp.com",
+      databaseURL: "https://bewareofdogs-af4a5-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "bewareofdogs-af4a5",
+      storageBucket: "bewareofdogs-af4a5.firebasestorage.app",
+      messagingSenderId: "1087595396696",
+      appId: "1:1087595396696:web:f93af34a1842a1fbd6d42d",
+      measurementId: "G-P7PLP9DSK8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getDatabase(app);
+
+    window.bajuOrders = [];
+    window.tiketOrders = [];
+    window.currentReceiptData = null;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const isLoggedIn = sessionStorage.getItem('bod_logged_in');
+      if (isLoggedIn === 'true') {
+        document.getElementById('loginModal').classList.add('hidden');
+        document.getElementById('loginModal').classList.remove('flex');
+        document.getElementById('appContainer').classList.remove('hidden');
+        document.getElementById('appContainer').classList.add('flex');
+      }
+
+      calculateBajuTotal();
+      calculateTiketTotal();
+      initRealtimeListeners();
+    });
+
+    window.handleLogin = function(e) {
+      e.preventDefault();
+      const user = document.getElementById('loginUser').value.trim();
+      const pass = document.getElementById('loginPass').value.trim();
+
+      if (user === 'BOD Organize' && pass === 'BOD2026') {
+        sessionStorage.setItem('bod_logged_in', 'true');
+        document.getElementById('loginModal').classList.add('hidden');
+        document.getElementById('loginModal').classList.remove('flex');
+        document.getElementById('appContainer').classList.remove('hidden');
+        document.getElementById('appContainer').classList.add('flex');
+        showToast("Login Berhasil!");
+      } else {
+        showToast("Username atau Password salah!", "error");
+      }
+    }
+
+    window.handleLogout = function() {
+      sessionStorage.removeItem('bod_logged_in');
+      location.reload();
+    }
+
+    function initRealtimeListeners() {
+      const bajuRef = ref(db, 'baju_orders');
+      onValue(bajuRef, (snapshot) => {
+        const data = snapshot.val();
+        window.bajuOrders = data ? Object.values(data) : [];
+        window.bajuOrders.sort((a, b) => b.orderId.localeCompare(a.orderId));
+        updateNamaFilterOptions('baju');
+        filterBajuData();
+        updatePanels();
+      });
+
+      const tiketRef = ref(db, 'tiket_orders');
+      onValue(tiketRef, (snapshot) => {
+        const data = snapshot.val();
+        window.tiketOrders = data ? Object.values(data) : [];
+        window.tiketOrders.sort((a, b) => b.orderId.localeCompare(a.orderId));
+        updateNamaFilterOptions('tiket');
+        filterTiketData();
+        updatePanels();
+      });
+    }
+
+    function updatePanels() {
+      const totalBajuPcs = window.bajuOrders.reduce((acc, curr) => acc + (parseInt(curr.pcs) || 0), 0);
+      const totalBajuOmset = window.bajuOrders.reduce((acc, curr) => acc + (parseInt(curr.totalHarga) || 0), 0);
+
+      const totalTiketPcs = window.tiketOrders.reduce((acc, curr) => acc + (parseInt(curr.pcs) || 0), 0);
+      const totalTiketOmset = window.tiketOrders.reduce((acc, curr) => acc + (parseInt(curr.totalHarga) || 0), 0);
+
+      document.getElementById('panelBajuPcs').innerText = `${numberWithCommas(totalBajuPcs)} Pcs`;
+      document.getElementById('panelBajuOmset').innerText = `Rp ${numberWithCommas(totalBajuOmset)}`;
+
+      document.getElementById('panelTiketPcs').innerText = `${numberWithCommas(totalTiketPcs)} Pcs`;
+      document.getElementById('panelTiketOmset').innerText = `Rp ${numberWithCommas(totalTiketOmset)}`;
+    }
+
+    // UPDATE DROPDOWN FILTER NAMA UNIK
+    function updateNamaFilterOptions(type) {
+      const list = type === 'baju' ? window.bajuOrders : window.tiketOrders;
+      const selectEl = document.getElementById(type === 'baju' ? 'filterBajuNama' : 'filterTiketNama');
+      const currentValue = selectEl.value;
+
+      // Ambil daftar nama unik
+      const uniqueNames = [...new Set(list.map(item => item.nama))].sort();
+
+      let optionsHtml = `<option value="">Semua Nama Pemesan</option>`;
+      uniqueNames.forEach(name => {
+        optionsHtml += `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`;
+      });
+
+      selectEl.innerHTML = optionsHtml;
+      selectEl.value = uniqueNames.includes(currentValue) ? currentValue : "";
+    }
+
+    // FILTER & SEARCH LOGIC BAJU
+    window.filterBajuData = function() {
+      const keyword = document.getElementById('searchBajuInput').value.toLowerCase();
+      const selectedName = document.getElementById('filterBajuNama').value;
+
+      const filtered = window.bajuOrders.filter(item => {
+        const matchName = selectedName === "" || item.nama === selectedName;
+        const matchKeyword = 
+          item.orderId.toLowerCase().includes(keyword) ||
+          item.nama.toLowerCase().includes(keyword) ||
+          item.whatsapp.toLowerCase().includes(keyword) ||
+          (item.size && item.size.toLowerCase().includes(keyword));
+
+        return matchName && matchKeyword;
+      });
+
+      renderBajuTable(filtered);
+    }
+
+    // FILTER & SEARCH LOGIC TIKET
+    window.filterTiketData = function() {
+      const keyword = document.getElementById('searchTiketInput').value.toLowerCase();
+      const selectedName = document.getElementById('filterTiketNama').value;
+
+      const filtered = window.tiketOrders.filter(item => {
+        const matchName = selectedName === "" || item.nama === selectedName;
+        const matchKeyword = 
+          item.orderId.toLowerCase().includes(keyword) ||
+          item.nama.toLowerCase().includes(keyword) ||
+          item.whatsapp.toLowerCase().includes(keyword);
+
+        return matchName && matchKeyword;
+      });
+
+      renderTiketTable(filtered);
+    }
+
+    window.handleBajuOrder = async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnBajuSubmit');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> <span>Menyimpan ke Firebase...</span>`;
+
+      const nama = document.getElementById('bajuNama').value.trim();
+      const size = document.getElementById('bajuSize').value;
+      const pcs = parseInt(document.getElementById('bajuPcs').value) || 1;
+      const hargaSatuan = parseInt(document.getElementById('bajuHarga').value) || 180000;
+      let wa = document.getElementById('bajuWa').value.trim();
+
+      wa = formatPhoneNumber(wa);
+      const totalHarga = pcs * hargaSatuan;
+      const dateFormatted = new Date().toLocaleString('id-ID');
+      const orderId = 'BOD-SHIRT-' + Date.now().toString().slice(-6);
+
+      const newOrder = { orderId, tipe: 'Baju', nama, size, pcs, hargaSatuan, totalHarga, whatsapp: wa, dateFormatted };
+
+      try {
+        await set(ref(db, 'baju_orders/' + orderId), newOrder);
+        showReceipt(newOrder, true);
+        document.getElementById('formBaju').reset();
+        calculateBajuTotal();
+        showToast("Pesanan baju berhasil disimpan ke Firebase!");
+      } catch (err) {
+        console.error(err);
+        showToast("Gagal menyimpan ke Firebase", "error");
+      }
+
+      btn.disabled = false;
+      btn.innerHTML = `<i class="fas fa-save"></i> <span>Simpan & Buat Struk WA / PDF</span>`;
+    }
+
+    window.handleTiketOrder = async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnTiketSubmit');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> <span>Menyimpan ke Firebase...</span>`;
+
+      const nama = document.getElementById('tiketNama').value.trim();
+      const pcs = parseInt(document.getElementById('tiketPcs').value) || 1;
+      const hargaSatuan = parseInt(document.getElementById('tiketHarga').value) || 20000;
+      let wa = document.getElementById('tiketWa').value.trim();
+
+      wa = formatPhoneNumber(wa);
+      const totalHarga = pcs * hargaSatuan;
+      const dateFormatted = new Date().toLocaleString('id-ID');
+      const orderId = 'BOD-TKT-' + Date.now().toString().slice(-6);
+
+      const newOrder = { orderId, tipe: 'Tiket', nama, pcs, hargaSatuan, totalHarga, whatsapp: wa, dateFormatted };
+
+      try {
+        await set(ref(db, 'tiket_orders/' + orderId), newOrder);
+        showReceipt(newOrder, true);
+        document.getElementById('formTiket').reset();
+        calculateTiketTotal();
+        showToast("Pesanan tiket berhasil disimpan ke Firebase!");
+      } catch (err) {
+        console.error(err);
+        showToast("Gagal menyimpan ke Firebase", "error");
+      }
+
+      btn.disabled = false;
+      btn.innerHTML = `<i class="fas fa-save"></i> <span>Simpan & Buat Struk WA / PDF</span>`;
+    }
+
+    window.openEditModal = function(type, orderId) {
+      const list = type === 'Baju' ? window.bajuOrders : window.tiketOrders;
+      const item = list.find(o => o.orderId === orderId);
+      if (!item) return;
+
+      document.getElementById('editItemType').value = type;
+      document.getElementById('editOrderId').value = item.orderId;
+      document.getElementById('editOrderIdDisplay').innerText = `ID: ${item.orderId}`;
+      document.getElementById('editNama').value = item.nama;
+      document.getElementById('editPcs').value = item.pcs;
+      document.getElementById('editHarga').value = item.hargaSatuan || (type === 'Baju' ? 180000 : 20000);
+      document.getElementById('editWa').value = item.whatsapp;
+
+      const sizeContainer = document.getElementById('editSizeContainer');
+      if (type === 'Baju') {
+        sizeContainer.classList.remove('hidden');
+        document.getElementById('editSize').value = item.size || 'M';
+      } else {
+        sizeContainer.classList.add('hidden');
+      }
+
+      const modal = document.getElementById('editModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    window.closeEditModal = function() {
+      const modal = document.getElementById('editModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    window.saveEditOrder = async function(e) {
+      e.preventDefault();
+      const type = document.getElementById('editItemType').value;
+      const orderId = document.getElementById('editOrderId').value;
+      const btn = document.getElementById('btnEditSave');
+
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Menyimpan...`;
+
+      const pcs = parseInt(document.getElementById('editPcs').value) || 1;
+      const hargaSatuan = parseInt(document.getElementById('editHarga').value) || 0;
+
+      const updatedData = {
+        orderId,
+        tipe: type,
+        nama: document.getElementById('editNama').value.trim(),
+        pcs,
+        hargaSatuan,
+        totalHarga: pcs * hargaSatuan,
+        whatsapp: formatPhoneNumber(document.getElementById('editWa').value.trim()),
+        dateFormatted: new Date().toLocaleString('id-ID')
+      };
+
+      if (type === 'Baju') {
+        updatedData.size = document.getElementById('editSize').value;
+      }
+
+      try {
+        const pathNode = type === 'Baju' ? `baju_orders/${orderId}` : `tiket_orders/${orderId}`;
+        await set(ref(db, pathNode), updatedData);
+        showToast("Riwayat berhasil diperbarui di Firebase!");
+        closeEditModal();
+      } catch (err) {
+        console.error(err);
+        showToast("Gagal memperbarui data", "error");
+      }
+
+      btn.disabled = false;
+      btn.innerText = "Simpan Perubahan";
+    }
+
+    window.deleteOrder = async function(type, orderId) {
+      if (!confirm(`Apakah Anda yakin ingin menghapus transaksi ${orderId}?`)) return;
+
+      try {
+        const pathNode = type === 'Baju' ? `baju_orders/${orderId}` : `tiket_orders/${orderId}`;
+        await remove(ref(db, pathNode));
+        showToast(`Transaksi ${orderId} berhasil dihapus!`);
+      } catch (err) {
+        console.error(err);
+        showToast("Gagal menghapus data", "error");
+      }
+    }
+
+    window.calculateBajuTotal = function() {
+      const pcs = parseInt(document.getElementById('bajuPcs').value) || 0;
+      const harga = parseInt(document.getElementById('bajuHarga').value) || 0;
+      document.getElementById('bajuTotalDisplay').innerText = 'Rp ' + numberWithCommas(pcs * harga);
+    }
+
+    window.calculateTiketTotal = function() {
+      const pcs = parseInt(document.getElementById('tiketPcs').value) || 0;
+      const harga = parseInt(document.getElementById('tiketHarga').value) || 0;
+      document.getElementById('tiketTotalDisplay').innerText = 'Rp ' + numberWithCommas(pcs * harga);
+    }
+
+    function renderBajuTable(dataList) {
+      const tbody = document.getElementById('tableBajuBody');
+      if (!dataList || dataList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-gray-500 italic">Tidak ada data riwayat baju yang ditemukan.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = dataList.map((item) => `
+        <tr class="hover:bg-bodCard/80 transition-colors">
+          <td class="py-3 px-2 font-bold text-bodRed">${item.orderId}</td>
+          <td class="py-3 px-2 font-bold font-sans">${escapeHtml(item.nama)}</td>
+          <td class="py-3 px-2"><span class="px-2 py-0.5 bg-bodBorder rounded font-black text-[11px] text-white">${item.size}</span></td>
+          <td class="py-3 px-2">${item.pcs} pcs</td>
+          <td class="py-3 px-2">${item.whatsapp}</td>
+          <td class="py-3 px-2 font-black text-bodRed">Rp ${numberWithCommas(item.totalHarga)}</td>
+          <td class="py-3 px-2 text-gray-400 text-[10px]">${item.dateFormatted}</td>
+          <td class="py-3 px-2 text-center flex items-center justify-center gap-1.5">
+            <button onclick='showReceipt(${JSON.stringify(item).replace(/'/g, "&apos;")})' title="Struk" class="px-2 py-1 bg-bodRed/20 hover:bg-bodRed text-bodRed hover:text-white rounded-lg font-sans font-bold text-[10px] transition-all">
+              <i class="fas fa-receipt"></i>
+            </button>
+            <button onclick="openEditModal('Baju', '${item.orderId}')" title="Edit" class="px-2 py-1 bg-blue-500/20 hover:bg-blue-600 text-blue-400 hover:text-white rounded-lg font-sans font-bold text-[10px] transition-all">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button onclick="deleteOrder('Baju', '${item.orderId}')" title="Hapus" class="px-2 py-1 bg-red-800/30 hover:bg-red-700 text-red-400 hover:text-white rounded-lg font-sans font-bold text-[10px] transition-all">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderTiketTable(dataList) {
+      const tbody = document.getElementById('tableTiketBody');
+      if (!dataList || dataList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-gray-500 italic">Tidak ada data riwayat tiket yang ditemukan.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = dataList.map((item) => `
+        <tr class="hover:bg-bodCard/80 transition-colors">
+          <td class="py-3 px-2 font-bold text-bodRed">${item.orderId}</td>
+          <td class="py-3 px-2 font-bold font-sans">${escapeHtml(item.nama)}</td>
+          <td class="py-3 px-2">${item.pcs} pcs</td>
+          <td class="py-3 px-2">${item.whatsapp}</td>
+          <td class="py-3 px-2 font-black text-bodRed">Rp ${numberWithCommas(item.totalHarga)}</td>
+          <td class="py-3 px-2 text-gray-400 text-[10px]">${item.dateFormatted}</td>
+          <td class="py-3 px-2 text-center flex items-center justify-center gap-1.5">
+            <button onclick='showReceipt(${JSON.stringify(item).replace(/'/g, "&apos;")})' title="Struk" class="px-2 py-1 bg-bodRed/20 hover:bg-bodRed text-bodRed hover:text-white rounded-lg font-sans font-bold text-[10px] transition-all">
+              <i class="fas fa-receipt"></i>
+            </button>
+            <button onclick="openEditModal('Tiket', '${item.orderId}')" title="Edit" class="px-2 py-1 bg-blue-500/20 hover:bg-blue-600 text-blue-400 hover:text-white rounded-lg font-sans font-bold text-[10px] transition-all">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button onclick="deleteOrder('Tiket', '${item.orderId}')" title="Hapus" class="px-2 py-1 bg-red-800/30 hover:bg-red-700 text-red-400 hover:text-white rounded-lg font-sans font-bold text-[10px] transition-all">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    window.showReceipt = function(data) {
+      window.currentReceiptData = data;
+      document.getElementById('recId').innerText = data.orderId;
+      document.getElementById('recTipe').innerText = data.tipe === 'Baju' ? 'Merchandise (Baju)' : 'Tiket Acara';
+      document.getElementById('recNama').innerText = data.nama;
+      document.getElementById('recDetail').innerText = data.tipe === 'Baju' 
+        ? `${data.pcs} Pcs (Size: ${data.size})` 
+        : `${data.pcs} Pcs Tiket`;
+      document.getElementById('recWa').innerText = data.whatsapp;
+      document.getElementById('recTotal').innerText = 'Rp ' + numberWithCommas(data.totalHarga);
+      document.getElementById('recTanggal').innerText = data.dateFormatted;
+
+      const modal = document.getElementById('receiptModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    window.closeReceiptModal = function() {
+      const modal = document.getElementById('receiptModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    window.sendReceiptToWa = function() {
+      if (!window.currentReceiptData) return;
+      const data = window.currentReceiptData;
+
+      const message = 
+`*STRUK PEMBELIAN OFFICIAL BEWARE OF DOGS*
+=================================
+*ID Transaksi:* ${data.orderId}
+*Tanggal:* ${data.dateFormatted}
+
+*Data Pemesan:*
+- Nama: ${data.nama}
+- No. WhatsApp: ${data.whatsapp}
+
+*Detail Item:*
+- Jenis: ${data.tipe}
+${data.tipe === 'Baju' ? `- Ukuran Baju: ${data.size}\n` : ''}- Jumlah: ${data.pcs} Pcs
+- Harga Satuan: Rp ${numberWithCommas(data.hargaSatuan)}
+- Total Bayar: *Rp ${numberWithCommas(data.totalHarga)}*
+
+=================================
+*Status:* TERSIMPAN DI FIREBASE REALTIME DATABASE
+_Terima kasih telah memesan official merchandise / tiket BEWARE OF DOGS! Simpan struk ini sebagai bukti transaksi resmi._`;
+
+      const encoded = encodeURIComponent(message);
+      window.open(`https://wa.me/${data.whatsapp}?text=${encoded}`, '_blank');
+    }
+
+    window.downloadReceiptPdf = function() {
+      if (!window.currentReceiptData) return;
+      const element = document.getElementById('receiptPrintCard');
+      
+      const opt = {
+        margin:       0.2,
+        filename:     `Struk_${window.currentReceiptData.orderId}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, backgroundColor: '#121212' },
+        jsPDF:        { unit: 'in', format: 'a5', orientation: 'portrait' }
+      };
+
+      html2pdf().set(opt).from(element).save();
+    }
+
+window.downloadPdfLaporan = function(type) {
+      const reportTitle = document.getElementById('pdfReportTitle');
+      const reportContent = document.getElementById('pdfReportContent');
+      const reportArea = document.getElementById('pdfReportArea');
+      const reportWrapper = document.getElementById('pdfReportContentWrapper');
+      const printDateEl = document.getElementById('pdfPrintDate');
+
+      // Ambil data sesuai pencarian/filter aktif saat didownload
+      const dataList = type === 'baju' 
+        ? window.bajuOrders.filter(item => {
+            const kw = document.getElementById('searchBajuInput').value.toLowerCase();
+            const nm = document.getElementById('filterBajuNama').value;
+            return (nm === "" || item.nama === nm) && (item.orderId.toLowerCase().includes(kw) || item.nama.toLowerCase().includes(kw) || item.whatsapp.toLowerCase().includes(kw));
+          })
+        : window.tiketOrders.filter(item => {
+            const kw = document.getElementById('searchTiketInput').value.toLowerCase();
+            const nm = document.getElementById('filterTiketNama').value;
+            return (nm === "" || item.nama === nm) && (item.orderId.toLowerCase().includes(kw) || item.nama.toLowerCase().includes(kw) || item.whatsapp.toLowerCase().includes(kw));
+          });
+
+      if (!dataList || dataList.length === 0) {
+        showToast(`Tidak ada data riwayat ${type} yang sesuai untuk didownload!`, 'error');
+        return;
+      }
+
+      printDateEl.innerText = new Date().toLocaleString('id-ID');
+      reportTitle.innerText = `LAPORAN TRANSAKSI PEMBELIAN ${type.toUpperCase()}`;
+      
+      let rowsHtml = `
+        <table style="width:100%; border-collapse: collapse; margin-top: 15px; color:#ffffff; font-size:11px; text-align:left;">
+          <thead>
+            <tr style="border-bottom: 2px solid #ff2a2a; color: #ff2a2a; font-weight: bold; text-transform: uppercase;">
+              <th style="padding: 8px 6px;">ID Transaksi</th>
+              <th style="padding: 8px 6px;">Nama Pemesan</th>
+              ${type === 'baju' ? '<th style="padding: 8px 6px;">Size</th>' : ''}
+              <th style="padding: 8px 6px;">Qty</th>
+              <th style="padding: 8px 6px;">WhatsApp</th>
+              <th style="padding: 8px 6px;">Total Bayar</th>
+              <th style="padding: 8px 6px;">Tanggal</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      dataList.forEach(item => {
+        rowsHtml += `
+          <tr style="border-bottom: 1px solid #222222;">
+            <td style="padding: 8px 6px; font-weight: bold; color: #ff2a2a;">${item.orderId}</td>
+            <td style="padding: 8px 6px; font-weight: 600;">${escapeHtml(item.nama)}</td>
+            ${type === 'baju' ? `<td style="padding: 8px 6px;"><span style="background:#222; padding:2px 6px; border-radius:4px;">${item.size || '-'}</span></td>` : ''}
+            <td style="padding: 8px 6px;">${item.pcs} pcs</td>
+            <td style="padding: 8px 6px;">${item.whatsapp}</td>
+            <td style="padding: 8px 6px; font-weight: bold; color: #00ff66;">Rp ${numberWithCommas(item.totalHarga)}</td>
+            <td style="padding: 8px 6px; color: #aaaaaa; font-size: 10px;">${item.dateFormatted}</td>
+          </tr>
+        `;
+      });
+
+      const grandTotal = dataList.reduce((acc, curr) => acc + (parseInt(curr.totalHarga) || 0), 0);
+      const totalPcs = dataList.reduce((acc, curr) => acc + (parseInt(curr.pcs) || 0), 0);
+
+      rowsHtml += `
+          </tbody>
+        </table>
+        
+        <div style="margin-top: 20px; padding-top: 12px; border-top: 2px solid #ff2a2a; display: flex; justify-space-between; align-items: center;">
+          <span style="font-size: 11px; color: #aaa;">Total Item Terjual: <b style="color:#fff;">${totalPcs} pcs</b></span>
+          <span style="font-size: 13px; font-weight: 900;">TOTAL OMSET: <span style="color:#00ff66; margin-left: 8px;">Rp ${numberWithCommas(grandTotal)}</span></span>
+        </div>
+      `;
+
+      reportContent.innerHTML = rowsHtml;
+      
+      // Tampilkan elemen PDF secara inline (bukan hidden tailwind) agar bisa dirender html2pdf dengan sempurna
+      reportArea.classList.remove('hidden');
+      reportArea.style.display = 'block';
+      reportArea.style.position = 'absolute';
+      reportArea.style.left = '-9999px';
+      reportArea.style.top = '0';
+
+      const opt = {
+        margin:       0.3,
+        filename:     `Laporan_Riwayat_${type.toUpperCase()}_BOD.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, backgroundColor: '#000000', logging: false, useCORS: true },
+        jsPDF:        { unit: 'in', format: 'a4', orientation: 'landscape' }
+      };
+
+      html2pdf().set(opt).from(reportWrapper).save().then(() => {
+        reportArea.style.display = 'none';
+        reportArea.classList.add('hidden');
+      }).catch(err => {
+        console.error(err);
+        reportArea.style.display = 'none';
+        reportArea.classList.add('hidden');
+        showToast("Gagal mengunduh PDF Laporan", "error");
+      });
+    }
+
+    window.switchTab = function(tab) {
+      const sections = {
+        baju: document.getElementById('tabBaju'),
+        tiket: document.getElementById('tabTiket'),
+        historyBaju: document.getElementById('tabHistoryBaju'),
+        historyTiket: document.getElementById('tabHistoryTiket')
+      };
+
+      const buttons = {
+        baju: document.getElementById('tabBtnBaju'),
+        tiket: document.getElementById('tabBtnTiket'),
+        historyBaju: document.getElementById('tabBtnHistoryBaju'),
+        historyTiket: document.getElementById('tabBtnHistoryTiket')
+      };
+
+      const activeClass = "bg-bodRed text-white shadow-lg shadow-bodRed/30";
+      const inactiveClass = "bg-transparent text-gray-400 hover:text-white hover:bg-bodBorder/50";
+
+      Object.keys(sections).forEach(key => {
+        sections[key].classList.add('hidden');
+        buttons[key].className = `py-3 px-3 rounded-xl font-extrabold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2 ${inactiveClass}`;
+      });
+
+      sections[tab].classList.remove('hidden');
+      buttons[tab].className = `py-3 px-3 rounded-xl font-extrabold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2 ${activeClass}`;
+    }
+
+    function formatPhoneNumber(phone) {
+      let cleaned = phone.replace(/\D/g, '');
+      if (cleaned.startsWith('0')) {
+        cleaned = '62' + cleaned.slice(1);
+      }
+      return cleaned;
+    }
+
+    function numberWithCommas(x) {
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function escapeHtml(str) {
+      return str ? str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") : '';
+    }
+
+    function showToast(msg, type = 'success') {
+      const toast = document.createElement('div');
+      toast.className = `fixed bottom-5 right-5 z-50 px-4 py-3 rounded-xl shadow-2xl text-xs font-bold flex items-center gap-2 transition-all duration-300 transform translate-y-10 opacity-0 ${
+        type === 'error' ? 'bg-red-600 text-white' : 'bg-green-600 text-white'
+      }`;
+      toast.innerHTML = `<i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle'} text-base"></i> ${msg}`;
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-10', 'opacity-0');
+      }, 50);
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-10', 'opacity-0');
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+  </script>
+
+</body>
+</html>
