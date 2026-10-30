@@ -1344,31 +1344,6 @@ window.downloadPdfLaporan = function(type) {
         showToast("Gagal mengunduh PDF Laporan", "error");
       });
     }
-      // Pastikan elemen wrapper muncul sementara secara mutlak agar html2pdf dapat membaca isi elemen
-      reportArea.classList.remove('hidden');
-      reportArea.style.display = 'block';
-      reportArea.style.position = 'absolute';
-      reportArea.style.left = '-9999px';
-      reportArea.style.top = '0';
-
-      const opt = {
-        margin:       0.3,
-        filename:     `Laporan_Riwayat_${type.toUpperCase()}_BOD.pdf`,
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, backgroundColor: '#000000', logging: false, useCORS: true },
-        jsPDF:        { unit: 'in', format: 'a4', orientation: 'landscape' }
-      };
-
-      html2pdf().set(opt).from(reportWrapper).save().then(() => {
-        reportArea.style.display = 'none';
-        reportArea.classList.add('hidden');
-      }).catch(err => {
-        console.error(err);
-        reportArea.style.display = 'none';
-        reportArea.classList.add('hidden');
-        showToast("Gagal mengunduh PDF Laporan", "error");
-      });
-    }
 
     // FUNGSI BARU: DOWNLOAD EXCEL LAPORAN
     window.downloadExcelLaporan = function(type) {
