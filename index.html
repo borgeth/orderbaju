@@ -1227,7 +1227,7 @@ ${data.tipe === 'Baju' ? `- Ukuran Baju: ${data.size}\n` : ''}- Jumlah: ${data.p
 - Total Bayar: *Rp ${numberWithCommas(data.totalHarga)}*
 
 =================================
-*Status:* TERSIMPAN DI FIREBASE REALTIME DATABASE
+*Status:* TERSIMPAN DI DATABASE BOD Organize
 _Terima kasih telah memesan official merchandise / tiket BEWARE OF DOGS! Simpan struk ini sebagai bukti transaksi resmi._`;
 
       const encoded = encodeURIComponent(message);
@@ -1413,6 +1413,67 @@ window.downloadPdfLaporan = function(type) {
       // Unduh file Excel
       XLSX.writeFile(workbook, `Laporan_Riwayat_${type.toUpperCase()}_BOD.xlsx`);
       showToast(`Laporan Excel ${type} berhasil diunduh!`);
+    }
+
+    window.switchTab = function(tab) {
+      const sections = {
+        baju: document.getElementById('tabBaju'),
+        tiket: document.getElementById('tabTiket'),
+        historyBaju: document.getElementById('tabHistoryBaju'),
+        historyTiket: document.getElementById('tabHistoryTiket')
+      };
+
+      const buttons = {
+        baju: document.getElementById('tabBtnBaju'),
+        tiket: document.getElementById('tabBtnTiket'),
+        historyBaju: document.getElementById('tabBtnHistoryBaju'),
+        historyTiket: document.getElementById('tabBtnHistoryTiket')
+      };
+
+      const activeClass = "bg-bodRed text-white shadow-lg shadow-bodRed/30";
+      const inactiveClass = "bg-transparent text-gray-400 hover:text-white hover:bg-bodBorder/50";
+
+      Object.keys(sections).forEach(key => {
+        sections[key].classList.add('hidden');
+        buttons[key].className = `py-3 px-3 rounded-xl font-extrabold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2 ${inactiveClass}`;
+      });
+
+      sections[tab].classList.remove('hidden');
+      buttons[tab].className = `py-3 px-3 rounded-xl font-extrabold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2 ${activeClass}`;
+    }
+
+    function formatPhoneNumber(phone) {
+      let cleaned = phone.replace(/\D/g, '');
+      if (cleaned.startsWith('0')) {
+        cleaned = '62' + cleaned.slice(1);
+      }
+      return cleaned;
+    }
+
+    function numberWithCommas(x) {
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function escapeHtml(str) {
+      return str ? str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") : '';
+    }
+
+    function showToast(msg, type = 'success') {
+      const toast = document.createElement('div');
+      toast.className = `fixed bottom-5 right-5 z-50 px-4 py-3 rounded-xl shadow-2xl text-xs font-bold flex items-center gap-2 transition-all duration-300 transform translate-y-10 opacity-0 ${
+        type === 'error' ? 'bg-red-600 text-white' : 'bg-green-600 text-white'
+      }`;
+      toast.innerHTML = `<i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle'} text-base"></i> ${msg}`;
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-10', 'opacity-0');
+      }, 50);
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-10', 'opacity-0');
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
     }
   </script>
 
